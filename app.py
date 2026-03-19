@@ -37,9 +37,10 @@ if user_input:
     # Get AI response
     try:
         response = client.models.generate_content(
-            model="gemini-1.5-flash",  # Updated to the stable model name
+            model="gemini-2.0-flash",  # Updated to the latest 2.0 version
             contents=user_input
         )
+        
         answer = response.text
 
         # Show AI response
