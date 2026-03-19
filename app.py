@@ -33,8 +33,9 @@ if prompt := st.chat_input("Ask me anything..."):
     # Generate response
     try:
         # Using gemini-3-flash: The 2026 workhorse model
+        # Changed to the 2026 stable preview ID
         response = client.models.generate_content(
-            model="gemini-3-flash", 
+            model="gemini-3-flash-preview", 
             contents=prompt
         )
         
