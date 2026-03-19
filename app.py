@@ -2,51 +2,52 @@ import streamlit as st
 from google import genai
 import os
 
-# --- 1. SECURE KEY HANDLING ---
-# This check handles both local development and Streamlit Cloud
+# --- SECURE KEY HANDLING ---
+# Streamlit Cloud uses st.secrets; local uses environment variables
 api_key = st.secrets.get("GOOGLE_API_KEY") or os.getenv("GOOGLE_API_KEY")
 
 if not api_key:
     st.error("🔑 API Key is missing! Please add GOOGLE_API_KEY to Streamlit Secrets.")
     st.stop()
 
-# Initialize Gemini client
+# Initialize the modern Gemini client
 client = genai.Client(api_key=api_key)
 
-# --- 2. APP UI ---
-st.title("🤖 Ask Anything AI")
+st.title("🚀 Gemini 3 AI Chat")
 
-# Store chat history
+# Session state for chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Show previous messages
+# Display chat history
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
-        st.write(msg["content"])
+        st.markdown(msg["content"])
 
-# Input box
-user_input = st.chat_input("Type your question...")
-
-if user_input:
-    # Show user message
+# User input
+if prompt := st.chat_input("Ask me anything..."):
+    st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
-        st.write(user_input)
-    st.session_state.messages.append({"role": "user", "content": user_input})
+        st.markdown(prompt)
 
-    # Get AI response
+    # Generate response
     try:
+        # Using gemini-3-flash: The 2026 workhorse model
         response = client.models.generate_content(
-            model="gemini-2.0-flash",  # Updated to the latest 2.0 version
-            contents=user_input
+            model="gemini-3-flash", 
+            contents=prompt
         )
         
-        answer = response.text
-
-        # Show AI response
+        full_response = response.text
+        
         with st.chat_message("assistant"):
-            st.write(answer)
-        st.session_state.messages.append({"role": "assistant", "content": answer})
+            st.markdown(full_response)
+        st.session_state.messages.append({"role": "assistant", "content": full_response})
         
     except Exception as e:
-        st.error(f"An error occurred: {e}")
+        if "429" in str(e):
+            st.error("⏳ Quota reached. Please wait a moment before the next request.")
+        elif "404" in str(e):
+            st.error("❌ Model not found. We might need to update the model name string.")
+        else:
+            st.error(f"⚠️ Error: {e}")
