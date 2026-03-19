@@ -13,8 +13,24 @@ if not api_key:
 # Initialize the modern Gemini client
 client = genai.Client(api_key=api_key)
 
-st.title("🚀 Gemini 3 AI Chat")
+st.title("🤖 Mohit's Overqualified Assistant")
+st.subheader("Powered by Gemini 3 Flash")
 
+with st.sidebar:
+    st.title("👨‍💻 The Creator")
+    st.markdown("""
+    Created by **Mohit**, a Software Enginner  who spent more time 
+    debugging this than he does sleeping. 
+    
+    **Disclaimer:** If the AI starts hallucinating or the app crashes, 
+    it's clearly a 'feature' I haven't documented yet. My local version 
+    worked perfectly, so it must be your internet. 😉
+    """)
+    
+    st.divider()
+    st.warning("⚠️ If you find a bug, please report it to [@mohit.singh](https://www.linkedin.com/in/mohit-singh/) on LinkedIn before I lose my mind.")
+    st.info("Enjoy the app and let me know your review!")
+    
 # Session state for chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
